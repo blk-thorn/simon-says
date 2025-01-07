@@ -1,0 +1,54 @@
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+#controls {
+  margin: 20px 0;
+}
+
+button {
+  margin-right: 10px;
+  padding: 10px 15px;
+  font-size: 16px;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+#virtual-keyboard {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.key {
+  padding: 20px;
+  background-color: #ddd;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.key:hover {
+  background-color: #bbb;
+}
+
+.disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
