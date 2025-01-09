@@ -13,21 +13,29 @@ h1 {
   margin-bottom: 20px;
 }
 
-#controls {
+
+.control__list {
+  display: flex;
+  list-style: none;
   margin: 20px 0;
 }
 
-button {
+.control__item {
+
+}
+
+.control__button {
   margin-right: 10px;
   padding: 10px 15px;
   font-size: 16px;
 }
 
-button:hover {
+
+.control__button:hover {
   cursor: pointer;
 }
 
-#virtual-keyboard {
+.virtual-keyboard {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   gap: 10px;
@@ -46,6 +54,10 @@ button:hover {
 
 .key:hover {
   background-color: #bbb;
+}
+
+.key--active {
+  background-color: red;
 }
 
 .disabled {
