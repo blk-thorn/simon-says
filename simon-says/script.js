@@ -9,6 +9,7 @@ const difficulty = {
 };
 
 let sequence = [];
+let recentSequence = [];
 let pressedKeys = [];
 let currentRound = 1;
 let currentDifficulty = 'easy';
@@ -16,8 +17,6 @@ let currentDifficulty = 'easy';
 
 window.onload = init;
 
-let length;
-let keyElement;
 
 function init() {
   createElements();
@@ -28,6 +27,7 @@ function init() {
   const easyButton = document.getElementById('easy');
   const mediumButton = document.getElementById('medium');
   const hardButton = document.getElementById('hard');
+
   const startButton = document.getElementById('start');
   const repeatButton = document.getElementById('repeat');
 
@@ -54,7 +54,7 @@ function init() {
   });
 
   repeatButton.addEventListener('click', () => {
-    startGame();
+    repeat();
   });
 }
 
@@ -69,7 +69,7 @@ function generateVirtualKeyboard() {
   const symbols = difficulty[currentDifficulty].split('');
 
   symbols.forEach(symbol => {
-    keyElement = document.createElement('button');
+    const keyElement = document.createElement('button');
     keyElement.textContent = symbol;
     keyElement.classList.add('key');
     keyElement.addEventListener('click', () => handleKeyPress(symbol));
@@ -77,10 +77,32 @@ function generateVirtualKeyboard() {
   });
 }
 
+function handleKeyPress(symbol) {
+  console.log(`Key pressed: ${symbol}`);
 
+  pressedKeys.push(symbol);
+  display.value = pressedKeys;
+
+  if (pressedKeys.length === sequence.length) {
+    if (isArraysEqual(pressedKeys, sequence)) {
+      console.log("Правильная последовательность:", pressedKeys);
+      currentRound++;
+      setTimeout(() => {
+        nextRound();
+      },1000);
+    } else {
+      console.log("Неправильная последовательность");
+      pressedKeys = [];
+    }
+  }
+}
+
+function isArraysEqual(arr1, arr2) {
+  return arr1.toString() === arr2.toString();
+}
 
 function startGame() {
-  length = currentRound * 2;
+  const length = currentRound * 2;
   const symbols = difficulty[currentDifficulty];
   sequence = [];
 
@@ -99,9 +121,11 @@ function startGame() {
 
     setTimeout(() => {
       keyToActivate.classList.remove('key--active');
-    }, index * 1000 + 1000);
+    }, index * 1000 + 800);
 })
-  display.value = sequence.join(', ');
+
+  display.value = sequence.join(' ');
+  recentSequence = sequence;
 }
 
 function nextRound() {
@@ -110,6 +134,22 @@ function nextRound() {
     startGame();
   }
 }
+function repeat() {
+  const activeKeys = document.querySelectorAll('.key');
+
+  recentSequence.forEach((item, index) => {
+    const keyToActivate = Array.from(activeKeys).find(key => key.textContent === item);
+
+    setTimeout(() => {
+      keyToActivate.classList.add('key--active');
+    }, index * 1000);
+
+    setTimeout(() => {
+      keyToActivate.classList.remove('key--active');
+    }, index * 1000 + 800);
+  })
+}
+
 
 function createElements() {
   const h1 = document.createElement('h1');
