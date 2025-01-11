@@ -20,11 +20,23 @@ h1 {
   margin: 20px 0;
 }
 
+.level__list {
+  display: flex;
+  list-style: none;
+  margin: 20px 0;
+}
+
 .control__item {
 
 }
 
 .control__button {
+  margin-right: 10px;
+  padding: 10px 15px;
+  font-size: 16px;
+}
+
+.level__button {
   margin-right: 10px;
   padding: 10px 15px;
   font-size: 16px;
@@ -37,12 +49,15 @@ h1 {
 
 .virtual-keyboard {
   display: grid;
+  justify-content: center;
   grid-template-columns: repeat(10, 1fr);
   gap: 10px;
   margin-top: 20px;
 }
 
 .key {
+  display: grid;
+  justify-self: center;
   padding: 20px;
   background-color: #ddd;
   border: 1px solid #ccc;
@@ -63,4 +78,17 @@ h1 {
 .disabled {
   background-color: #e0e0e0;
   cursor: not-allowed;
+}
+
+.display-none {
+  display: none;
+}
+
+.display {
+  display: flex;
+  text-align: center;
+  width: 600px;
+  height: 200px;
+  font-size: 32px;
+  border-radius: 15px;
 }
