@@ -1,3 +1,13 @@
+*,
+*::before,
+*::after {
+  padding: 0;
+  border: none;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+
 body {
   font-family: Arial, sans-serif;
   display: flex;
@@ -34,12 +44,14 @@ h1 {
   margin-right: 10px;
   padding: 10px 15px;
   font-size: 16px;
+  cursor: pointer;
 }
 
 .level__button {
   margin-right: 10px;
   padding: 10px 15px;
   font-size: 16px;
+  cursor: pointer;
 }
 
 
@@ -91,4 +103,8 @@ h1 {
   height: 200px;
   font-size: 32px;
   border-radius: 15px;
+}
+
+:disabled {
+  cursor: not-allowed;
 }

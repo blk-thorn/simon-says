@@ -15,6 +15,8 @@ let currentRound = 1;
 let currentDifficulty = 'easy';
 
 let tryCount = 1;
+let keyPressedOnce = false;
+let inputBlocked = false;
 
 
 window.onload = init;
@@ -64,8 +66,6 @@ function init() {
     sequence = [];
     pressedKeys = [];
     startGame();
-    mediumButton.disabled = true;
-    hardButton.disabled = true;
     startButton.style.display = 'none';
     repeatButton.style.display = 'flex';
     newGame.style.display = 'flex';
@@ -73,19 +73,37 @@ function init() {
 
   repeatButton.addEventListener('click', () => {
     repeatButton.disabled = true;
+    inputBlocked = false;
     repeat();
+    display.value = '';
   });
 
   nextButton.addEventListener('click', () => {
     nextRound();
+    repeatButton.disabled = false;
   });
 
   newGame.addEventListener('click', () => {
+    display.value = "";
     sequence = [];
     pressedKeys = [];
+
+    repeatButton.disabled = false;
+    easyButton.disabled = false;
+    mediumButton.disabled = false;
+    hardButton.disabled = false;
+    inputBlocked = false;
+
     startButton.style.display = 'flex';
     repeatButton.style.display = 'none';
     newGame.style.display = 'none';
+    nextButton.style.display = 'none';
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (inputBlocked) return;
+    const key = event.key.toUpperCase();
+    handleKeyPress(key);
   });
 
 }
@@ -93,7 +111,7 @@ function init() {
 function generateVirtualKeyboard() {
  const virtualKeyboard = document.getElementById('virtual-keyboard');
   if (!virtualKeyboard) {
-    console.error('Element virtual-keyboard not found');
+    console.error('Virtual keyboard not found');
     return;
   }
 
@@ -104,35 +122,97 @@ function generateVirtualKeyboard() {
     const keyElement = document.createElement('button');
     keyElement.textContent = symbol;
     keyElement.classList.add('key');
-    keyElement.addEventListener('click', () => handleKeyPress(symbol));
+    keyElement.dataset.key = symbol;
+
+    keyElement.addEventListener('click', () => {
+      handleKeyPress(symbol);
+      changeButtonColor(symbol, 'red');
+    });
+
+    keyElement.addEventListener('mousedown', () => {
+      changeButtonColor(symbol, 'red');
+    });
+
+    keyElement.addEventListener('mouseup', () => {
+      changeButtonColor(symbol, '');
+    });
+
+
+    keyElement.addEventListener('mouseleave', () => {
+      changeButtonColor(symbol, '');
+    });
+
     virtualKeyboard.appendChild(keyElement);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const keySymbol = event.key.toUpperCase();
+    changeButtonColor(keySymbol, 'red');
+  });
+
+  document.addEventListener('keyup', (event) => {
+    const keySymbol = event.key.toUpperCase();
+    changeButtonColor(keySymbol, '');
   });
 }
 
-function handleKeyPress(symbol) {
-  console.log(`Key pressed: ${symbol}`);
-  const nextButton = document.getElementById('next');
-  pressedKeys.push(symbol);
-  display.value = pressedKeys;
+function changeButtonColor(key, color) {
+  const button = document.querySelector(`.key[data-key="${key}"]`);
+  button.style.backgroundColor = color;
+}
 
+function handleKeyPress(symbol) {
+  const keySymbol = symbol.toUpperCase();
+
+  if (inputBlocked) return;
+
+  console.log('Current Difficulty:', currentDifficulty);
+
+  const validKeys = difficulty[currentDifficulty];
+  console.log('Valid keys:', validKeys);
+
+  if (!keyPressedOnce && validKeys.includes(keySymbol)) {
+    console.log(`Key accepted: ${keySymbol}`);
+    pressedKeys.push(keySymbol);
+    compareSymbols();
+    keyPressedOnce = true;
+  } else {
+    console.log(`Key rejected: ${keySymbol}`);
+  }
+
+  setTimeout(() => {
+    keyPressedOnce = false;
+  }, 50);
+}
+
+
+
+function compareSymbols() {
+  const nextButton = document.getElementById('next');
+  const repeatButton = document.getElementById('repeat sequence');
   if (pressedKeys.length === sequence.length) {
+    inputBlocked = true;
     if (isArraysEqual(pressedKeys, sequence)) {
       display.value = "Correct!";
       currentRound++;
+      nextButton.style.display = 'flex';
+      nextButton.disabled = false;
+      repeatButton.disabled = true;
       setTimeout(() => {
-        nextButton.style.display = 'flex';
         // nextRound();
-        document.querySelector('h2').textContent = `Round: ${currentRound}`;
-        document.getElementById('repeat').disabled = false;
-      },1000);
-    } else if(tryCount === 2) {
-      document.getElementById('start').style.display = 'flex';
+        document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
+      }, 1000);
+    } else if (tryCount === 2) {
       display.value = "You loose!";
       pressedKeys = [];
+      nextButton.disabled = true;
+      repeatButton.disabled = true;
+      // inputBlocked = true;
     } else {
       display.value = "Wrong sequence!";
       tryCount++
       pressedKeys = [];
+      nextButton.disabled = true;
     }
   }
 }
@@ -144,6 +224,11 @@ function isArraysEqual(arr1, arr2) {
 function startGame() {
   const length = currentRound * 2;
   const symbols = difficulty[currentDifficulty];
+
+  document.getElementById('easy').disabled = true;
+  document.getElementById('medium').disabled = true;
+  document.getElementById('hard').disabled = true;
+
 
   sequence = [];
   tryCount = 1;
@@ -201,7 +286,7 @@ function createElements() {
   h1.textContent = 'Simon Says Game';
 
   const h2 = document.createElement('h2');
-  h2.textContent = `Round: ${currentRound}`;
+  h2.textContent = `Round: ${currentRound} / 5`;
 
   const ul = document.createElement('ul');
   ul.className = 'level__list';
@@ -226,7 +311,7 @@ function createElements() {
     ul.appendChild(li);
   });
 
-  const controlButtons = [ 'Repeat sequence', 'New game', "Next"];
+  const controlButtons = ['Repeat sequence', 'New game', "Next"];
 
   controlButtons.forEach((name, index) => {
     const li = document.createElement('li');
@@ -249,7 +334,7 @@ function createElements() {
 
   display = document.createElement('input');
   display.className = 'display';
-
+  display.setAttribute('readonly', true);
 
   body.append(h1);
   body.append(h2)
