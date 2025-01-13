@@ -86,6 +86,7 @@ function init() {
     nextRound();
     repeatButton.disabled = false;
     inputBlocked = false;
+    nextButton.style.display = 'none';
   });
 
   newGame.addEventListener('click', () => {
@@ -205,14 +206,14 @@ function compareSymbols() {
       setTimeout(() => {
         display.value = "Correct!";
       }, 300);
-      currentRound++;
+      // currentRound++;
       nextButton.style.display = 'flex';
       nextButton.disabled = false;
       repeatButton.disabled = true;
-      setTimeout(() => {
-        // nextRound();
-        document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
-      }, 1000);
+      // setTimeout(() => {
+      //   // nextRound();
+      //   document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
+      // }, 1000);
     } else if (tryCount === 2) {
       setTimeout(() => {
         display.value = "You loose!";
@@ -266,14 +267,20 @@ function startGame() {
     }, index * 1000 + 800);
 })
 
-  display.value = sequence.join(' ');
+  // display.value = sequence.join(' ');
+  console.log(`Current sequence: ${sequence.join(' ')}`);
   recentSequence = sequence;
 }
 
 function nextRound() {
   pressedKeys = [];
   tryCount = 1;
+  currentRound++;
 
+  setTimeout(() => {
+    // nextRound();
+    document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
+  }, 1000);
   if(currentRound < 5) {
     startGame();
   }
