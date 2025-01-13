@@ -18,7 +18,7 @@ let currentDifficulty = 'easy';
 
 let tryCount = 1;
 let keyPressedOnce = false;
-let inputBlocked = false;
+let inputBlocked = true;
 
 
 window.onload = init;
@@ -94,6 +94,9 @@ function init() {
     display.value = "";
     sequence = [];
     pressedKeys = [];
+    currentRound = 1;
+    document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
+
     startButton.disabled = false;
     repeatButton.disabled = false;
     easyButton.disabled = false;
@@ -173,23 +176,37 @@ function changeButtonColor(key, color) {
   }
 }
 
+function normalizeSymbol(symbol) {
+  const symbolsMap = {
+    'Q': 'Й', 'W': 'Ц', 'E': 'У', 'R': 'К', 'T': 'Е', 'Y': 'Н', 'U': 'Г', 'I': 'Ш', 'O': 'Щ', 'P': 'З',
+    'A': 'Ф', 'S': 'Ы', 'D': 'В', 'F': 'А', 'G': 'П', 'H': 'Р', 'J': 'О', 'K': 'Л', 'L': 'Д',
+    'Z': 'Я', 'X': 'Ч', 'C': 'С', 'V': 'М', 'B': 'И', 'N': 'Т', 'M': 'Ь',
+
+    'Й': 'Q', 'Ц': 'W', 'У': 'E', 'К': 'R', 'Е': 'T', 'Н': 'Y', 'Г': 'U', 'Ш': 'I', 'Щ': 'O', 'З': 'P',
+    'Ф': 'A', 'Ы': 'S', 'В': 'D', 'А': 'F', 'П': 'G', 'Р': 'H', 'О': 'J', 'Л': 'K', 'Д': 'L',
+    'Я': 'Z', 'Ч': 'X', 'С': 'C', 'М': 'V', 'И': 'B', 'Т': 'N', 'Ь': 'M'
+  };
+
+  return symbolsMap[symbol] || symbol;
+}
+
+
 function handleKeyPress(symbol) {
-  const keySymbol = symbol.toUpperCase();
+  const keySymbol = normalizeSymbol(symbol.toUpperCase());
 
   if (inputBlocked) return;
-  // console.log('Current Difficulty:', currentDifficulty);
-  const validKeys = difficulty[currentDifficulty];
-  // console.log('Valid keys:', validKeys);
+
+  const validKeys = difficulty[currentDifficulty].split('');
+
   if (!keyPressedOnce && validKeys.includes(keySymbol)) {
-    // console.log(`Key accepted: ${keySymbol}`);
     pressedKeys.push(keySymbol);
     display.value = pressedKeys.join(' ');
-
     compareSymbols();
     keyPressedOnce = true;
   } else {
     // console.log(`Key rejected: ${keySymbol}`);
   }
+
   setTimeout(() => {
     keyPressedOnce = false;
   }, 50);
@@ -199,38 +216,34 @@ function handleKeyPress(symbol) {
 function compareSymbols() {
   const nextButton = document.getElementById('next');
   const repeatButton = document.getElementById('repeat sequence');
-  if (pressedKeys.length === sequence.length) {
+
+  const normalizedSequence = sequence.map(normalizeSymbol);
+  if (pressedKeys.length === normalizedSequence.length) {
     inputBlocked = true;
-    if (isArraysEqual(pressedKeys, sequence)) {
+    if (isArraysEqual(pressedKeys, normalizedSequence)) {
       setTimeout(() => {
         display.value = "Correct!";
       }, 300);
       currentRound++;
       nextButton.style.display = 'flex';
       nextButton.disabled = false;
+      repeatButton.style.display = 'none';
       repeatButton.disabled = true;
-      // inputBlocked = true;
-      // setTimeout(() => {
-      //   // nextRound();
-      //   document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
-      // }, 1000);
     } else if (tryCount === 2) {
       setTimeout(() => {
-        display.value = "You loose!";
+        display.value = "You lose!";
       }, 300);
       pressedKeys = [];
       nextButton.disabled = true;
       repeatButton.disabled = true;
       inputBlocked = true;
-      // inputBlocked = true;
     } else {
       setTimeout(() => {
         display.value = "Wrong sequence!";
       }, 300);
-      tryCount++
+      tryCount++;
       pressedKeys = [];
       nextButton.disabled = true;
-      // inputBlocked = true;
     }
   }
 }
@@ -238,8 +251,6 @@ function compareSymbols() {
 function isArraysEqual(arr1, arr2) {
   return arr1.toString() === arr2.toString();
 }
-
-
 
 
 
@@ -272,7 +283,7 @@ function startGame() {
     setTimeout(() => {
       keyToActivate.classList.remove('key--active');
       if (index === length - 1) {
-        inputBlocked = false; // Разблокировка ввода
+        inputBlocked = false;
       }
     }, index * 1000 + 800);
 })
@@ -284,6 +295,7 @@ function startGame() {
 
 
 function nextRound() {
+  document.getElementById('repeat sequence').style.display = 'flex';
   pressedKeys = [];
   tryCount = 1;
   if(currentRound < 5) {
@@ -307,7 +319,7 @@ function repeat() {
     setTimeout(() => {
       keyToActivate.classList.remove('key--active');
       if (index === recentSequence.length - 1) {
-        inputBlocked = false; // Разблокировка ввода
+        inputBlocked = false;
       }
     }, index * 1000 + 800);
   })
@@ -352,7 +364,7 @@ function createElements() {
 
   });
 
-  const controlButtons = ['Repeat sequence', 'New game', "Next"];
+  const controlButtons = ['New game', 'Repeat sequence', "Next"];
 
   controlButtons.forEach((name, index) => {
     const li = document.createElement('li');
