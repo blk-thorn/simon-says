@@ -5,11 +5,13 @@
   border: none;
   margin: 0;
   box-sizing: border-box;
+  font-family: 'Sonic Logo', serif;
+  font-weight: bold;
+  font-style: normal;
 }
 
 
-body {
-  font-family: Arial, sans-serif;
+.body {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -19,11 +21,16 @@ body {
   background-color: #f0f0f0;
 }
 
-h1 {
+.title {
   margin-bottom: 20px;
+  font-size: 36px;
+  color: #2F4F4FFF;
 }
 
-
+.subtitle {
+  font-size: 32px;
+  color: #2F4F4FFF;
+}
 .control__list,
 .level__list {
   width: 30%;
@@ -41,7 +48,7 @@ h1 {
   display: flex;
   justify-content: center;
   width: 100%;
-  padding: 10px 15px;
+  padding: 10px 0;
   font-size: 16px;
   cursor: pointer;
   border: 1px solid dimgray;
@@ -51,7 +58,8 @@ h1 {
 
 .control__button:not([disabled]):hover:not(.key--active),
 .level__button:not([disabled]):hover:not(.key--active) {
-  background-color: #bbb;
+  /*background-color: #bbb;*/
+  background-color: rgba(47, 79, 79, 0.2);
   cursor: pointer;
 }
 
@@ -71,9 +79,9 @@ h1 {
   width: 3.3rem;
   height: 3.3rem;
   justify-content: center;
-  align-content: center;
+  align-items: center;
   padding: 20px;
-  background-color: #ddd;
+  background-color: rgba(221, 221, 221, 0.5);
   border: 1px solid #ccc;
   border-radius: 5px;
   text-align: center;
@@ -87,7 +95,8 @@ h1 {
 }
 
 .key:not(.key--active):hover {
-  background-color: #bbb;
+  /*background-color: #bbb;*/
+  background-color: rgba(47, 79, 79, 0.2);
 }
 
 
@@ -110,11 +119,12 @@ h1 {
   font-size: 42px;
   border-radius: 15px;
   margin: 0 1rem;
-  background-color: rgba(50, 180, 225, 0.2);
+  background-color: rgba(47, 79, 79, 0.1);
+  cursor: default !important;
 }
 
 :disabled {
-  cursor: not-allowed !important;
+  cursor: not-allowed;
   border: 1px solid #bebebe;
 }
 
@@ -140,7 +150,8 @@ h1 {
 }
 
 .start-button:not(.hidden):hover{
-  background-color: #bbb;
+  /*background-color: #bbb;*/
+  background-color: rgba(47, 79, 79, 0.1);
   cursor: pointer;
 }
 
@@ -173,10 +184,23 @@ h1 {
   .control__button,
   .level__button {
     width: 100%;
+    padding: 10px 15px;
+  }
+
+  .virtual-keyboard {
+    width: 85%;
+    max-width: 600px;
+  }
+
+  .key {
+    width: 20px;
+    height: 20px;
   }
 
 }
 
-@media (min-width: 360px) and (max-width: 1090px) {
-
+@media (min-width: 360px) and (max-width: 860px) {
+  .control__button {
+    font-size: 14px;
+  }
 }

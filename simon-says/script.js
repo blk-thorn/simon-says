@@ -1,4 +1,6 @@
 const body = document.querySelector("body");
+body.className = 'body';
+
 let display;
 
 const activeColor = 'rgba(225, 0, 0, 0.5)'
@@ -86,7 +88,7 @@ function init() {
     nextRound();
 
     repeatButton.disabled = false;
-    inputBlocked = false;
+    inputBlocked = true;
     nextButton.style.display = 'none';
     document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
   })
@@ -111,66 +113,69 @@ function init() {
   });
 
   document.addEventListener('keydown', (event) => {
-    if (inputBlocked) return;
-    handleKeyPress(event);
+    if(inputBlocked) return;
+    const keySymbol = event.code.replace('Key', '').replace('Digit', '').toUpperCase();
+    handleKeyPress(keySymbol);
+    changeButtonColor(keySymbol, activeColor);
   });
-
 }
 
 function generateVirtualKeyboard() {
- const virtualKeyboard = document.getElementById('virtual-keyboard');
-  if (!virtualKeyboard) {
-    console.error('Virtual keyboard not found');
-    return;
-  }
+  const virtualKeyboard = document.getElementById('virtual-keyboard');
+  if (virtualKeyboard) {
+    virtualKeyboard.innerHTML = '';
+    const symbols = difficulty[currentDifficulty].split('');
 
-  virtualKeyboard.innerHTML = '';
-  const symbols = difficulty[currentDifficulty].split('');
+    symbols.forEach(symbol => {
+      const keyElement = document.createElement('button');
+      keyElement.textContent = symbol;
+      keyElement.classList.add('key');
+      keyElement.dataset.key = symbol;
 
-  symbols.forEach(symbol => {
-    const keyElement = document.createElement('button');
-    keyElement.textContent = symbol;
-    keyElement.classList.add('key');
-    keyElement.dataset.key = symbol;
+      keyElement.addEventListener('click', () => {
+        if(inputBlocked) return;
+        handleKeyPress(symbol);
+        changeButtonColor(symbol, activeColor);
+      });
 
-    keyElement.addEventListener('click', () => {
-      handleKeyPress(symbol);
-      changeButtonColor(symbol, activeColor);
-    });
+      keyElement.addEventListener('mousedown', () => {
+        if(inputBlocked) return;
+        changeButtonColor(symbol, activeColor);
+      });
 
-    keyElement.addEventListener('mousedown', () => {
-      changeButtonColor(symbol, activeColor);
-    });
+      keyElement.addEventListener('mouseup', () => {
+        changeButtonColor(symbol, '');
+      });
 
-    keyElement.addEventListener('mouseup', () => {
-      changeButtonColor(symbol, '');
-    });
+      keyElement.addEventListener('mouseleave', () => {
+        changeButtonColor(symbol, '');
+      });
 
-
-    keyElement.addEventListener('mouseleave', () => {
-      changeButtonColor(symbol, '');
-    });
-
-    virtualKeyboard.appendChild(keyElement);
+      virtualKeyboard.appendChild(keyElement);
   });
 
   document.addEventListener('keydown', (event) => {
+    if(inputBlocked) return;
     const keySymbol = event.key.toUpperCase();
     changeButtonColor(keySymbol, activeColor);
   });
 
-  document.addEventListener('keyup', (event) => {
-    const keySymbol = event.key.toUpperCase();
-    changeButtonColor(keySymbol, '');
+  document.addEventListener('keydown', (event) => {
+    if(inputBlocked) return;
+    const keySymbol = event.code.replace('Key', '').replace('Digit', '').toUpperCase();
+    handleKeyPress(keySymbol);
+    changeButtonColor(keySymbol, activeColor);
   });
 }
+  }
 
 function changeButtonColor(key, color) {
   const button = document.querySelector(`.key[data-key="${key}"]`);
   if (button) {
     button.style.backgroundColor = color;
     if(inputBlocked) {
-      button.style.backgroundColor = '#ddd';
+      color = ''
+      button.style.backgroundColor = color;
     }
   }
 }
@@ -178,15 +183,16 @@ function changeButtonColor(key, color) {
 
 
 
-function handleKeyPress(event) {
-  const keySymbol = event.code.replace('Key', '').toUpperCase();
+function handleKeyPress(keySymbol) {
   console.log(`Key pressed: ${keySymbol}`);
 
   if (inputBlocked) return;
 
   const validKeys = difficulty[currentDifficulty];
 
-  if (!keyPressedOnce && validKeys.includes(keySymbol)) {
+  const isNumberKey = !isNaN(Number(keySymbol));
+
+  if (!keyPressedOnce && (validKeys.includes(keySymbol) || (isNumberKey && validKeys.includes(keySymbol)))) {
     pressedKeys.push(keySymbol);
     display.value = pressedKeys.join(' ');
     compareSymbols();
@@ -200,37 +206,73 @@ function handleKeyPress(event) {
   }, 50);
 }
 
-
 function compareSymbols() {
   const nextButton = document.getElementById('next');
   const repeatButton = document.getElementById('repeat sequence');
+  tryCount = 1;
+  let isWrong = false;
+
+  for (let i = 0; i < pressedKeys.length; i++) {
+    if (pressedKeys[i] !== sequence[i]) {
+      setTimeout(() => {
+        display.value = "Wrong sequence!";
+      }, 100);
+      tryCount++;
+      isWrong = true;
+      pressedKeys = [];
+      nextButton.disabled = true;
+      inputBlocked = true;
+      return;
+    }
+  }
+  if(isWrong) {
+    console.log(tryCount)
+    if(tryCount === 2) {
+    setTimeout(() => {
+      display.value = "You lose!";
+    }, 200);
+    }
+  }
+
   if (pressedKeys.length === sequence.length) {
     inputBlocked = true;
     if (isArraysEqual(pressedKeys, sequence)) {
-      setTimeout(() => {
-        display.value = "Correct!";
-      }, 300);
-      currentRound++;
       nextButton.style.display = 'flex';
       nextButton.disabled = false;
       repeatButton.style.display = 'none';
       repeatButton.disabled = true;
-    } else if (tryCount === 2) {
+
       setTimeout(() => {
-        display.value = "You lose!";
-      }, 300);
-      pressedKeys = [];
-      nextButton.disabled = true;
-      repeatButton.disabled = true;
-      inputBlocked = true;
-      // inputBlocked = true;
+        display.value = "Correct!";
+      }, 200);
+      if(currentRound === 5) {
+        setTimeout(() => {
+          display.value = "You won!";
+        }, 200);
+
+      }
+      currentRound++;
+      if(currentRound > 5) {
+        nextButton.disabled = true;
+        nextButton.style.display = 'none';
+      }
     } else {
-      setTimeout(() => {
-        display.value = "Wrong sequence!";
-      }, 300);
-      tryCount++
-      pressedKeys = [];
-      nextButton.disabled = true;
+      if (tryCount === 2) {
+        setTimeout(() => {
+          display.value = "You lose!";
+        }, 200);
+        pressedKeys = [];
+        nextButton.disabled = true;
+        repeatButton.disabled = true;
+        inputBlocked = true;
+      } else {
+        setTimeout(() => {
+          display.value = "Wrong sequence!";
+        }, 200);
+        pressedKeys = [];
+        nextButton.disabled = true;
+        inputBlocked = true;
+      }
     }
   }
 }
@@ -239,8 +281,6 @@ function compareSymbols() {
 function isArraysEqual(arr1, arr2) {
   return arr1.toString() === arr2.toString();
 }
-
-
 
 function startGame() {
   const length = currentRound * 2;
@@ -265,13 +305,15 @@ function startGame() {
     const keyToActivate = Array.from(activeKeys).find(key => key.textContent === item);
 
     setTimeout(() => {
-      keyToActivate.classList.add('key--active');
+      // keyToActivate.classList.add('key--active');
+      keyToActivate.style.backgroundColor = activeColor;
     }, index * 1000);
 
     setTimeout(() => {
-      keyToActivate.classList.remove('key--active');
+      // keyToActivate.classList.remove('key--active');
+      keyToActivate.style.backgroundColor = 'rgba(47, 79, 79, 0.1)';
       if (index === length - 1) {
-        inputBlocked = false;
+          inputBlocked = false; // Разблокировка ввода здесь!!!
       }
     }, index * 1000 + 800);
 })
@@ -286,11 +328,10 @@ function nextRound() {
   document.getElementById('repeat sequence').style.display = 'flex';
   pressedKeys = [];
   tryCount = 1;
-  if(currentRound < 5) {
+  if(currentRound <= 5) {
     startGame();
   }
 }
-
 
 
 function repeat() {
@@ -301,13 +342,16 @@ function repeat() {
     const keyToActivate = Array.from(activeKeys).find(key => key.textContent === item);
 
     setTimeout(() => {
-      keyToActivate.classList.add('key--active');
+      keyToActivate.style.backgroundColor = activeColor;
+      // keyToActivate.classList.add('key--active');
     }, index * 1000);
 
     setTimeout(() => {
-      keyToActivate.classList.remove('key--active');
+      // keyToActivate.classList.remove('key--active');
+      // keyToActivate.style.backgroundColor = '#ddd';
+      keyToActivate.style.backgroundColor = 'rgba(47, 79, 79, 0.1)';
       if (index === recentSequence.length - 1) {
-        inputBlocked = false;
+          inputBlocked = false; // Разблокировка ввода здесь!!!
       }
     }, index * 1000 + 800);
   })
@@ -317,9 +361,11 @@ function repeat() {
 function createElements() {
   const h1 = document.createElement('h1');
   h1.textContent = 'Simon Says Game';
+  h1.className = 'title';
 
   const h2 = document.createElement('h2');
   h2.textContent = `Round: ${currentRound} / 5`;
+  h2.className = 'subtitle';
 
   const main = document.createElement('main');
   main.className = 'main';
@@ -349,7 +395,6 @@ function createElements() {
 
     li.append(button);
     ul.append(li);
-
   });
 
   const controlButtons = ['New game', 'Repeat sequence', "Next"];
