@@ -112,8 +112,7 @@ function init() {
 
   document.addEventListener('keydown', (event) => {
     if (inputBlocked) return;
-    const key = event.key.toUpperCase();
-    handleKeyPress(key);
+    handleKeyPress(event);
   });
 
 }
@@ -176,27 +175,16 @@ function changeButtonColor(key, color) {
   }
 }
 
-function normalizeSymbol(symbol) {
-  const symbolsMap = {
-    'Q': 'Й', 'W': 'Ц', 'E': 'У', 'R': 'К', 'T': 'Е', 'Y': 'Н', 'U': 'Г', 'I': 'Ш', 'O': 'Щ', 'P': 'З',
-    'A': 'Ф', 'S': 'Ы', 'D': 'В', 'F': 'А', 'G': 'П', 'H': 'Р', 'J': 'О', 'K': 'Л', 'L': 'Д',
-    'Z': 'Я', 'X': 'Ч', 'C': 'С', 'V': 'М', 'B': 'И', 'N': 'Т', 'M': 'Ь',
-
-    'Й': 'Q', 'Ц': 'W', 'У': 'E', 'К': 'R', 'Е': 'T', 'Н': 'Y', 'Г': 'U', 'Ш': 'I', 'Щ': 'O', 'З': 'P',
-    'Ф': 'A', 'Ы': 'S', 'В': 'D', 'А': 'F', 'П': 'G', 'Р': 'H', 'О': 'J', 'Л': 'K', 'Д': 'L',
-    'Я': 'Z', 'Ч': 'X', 'С': 'C', 'М': 'V', 'И': 'B', 'Т': 'N', 'Ь': 'M'
-  };
-
-  return symbolsMap[symbol] || symbol;
-}
 
 
-function handleKeyPress(symbol) {
-  const keySymbol = normalizeSymbol(symbol.toUpperCase());
+
+function handleKeyPress(event) {
+  const keySymbol = event.code.replace('Key', '').toUpperCase();
+  console.log(`Key pressed: ${keySymbol}`);
 
   if (inputBlocked) return;
 
-  const validKeys = difficulty[currentDifficulty].split('');
+  const validKeys = difficulty[currentDifficulty];
 
   if (!keyPressedOnce && validKeys.includes(keySymbol)) {
     pressedKeys.push(keySymbol);
@@ -216,11 +204,9 @@ function handleKeyPress(symbol) {
 function compareSymbols() {
   const nextButton = document.getElementById('next');
   const repeatButton = document.getElementById('repeat sequence');
-
-  const normalizedSequence = sequence.map(normalizeSymbol);
-  if (pressedKeys.length === normalizedSequence.length) {
+  if (pressedKeys.length === sequence.length) {
     inputBlocked = true;
-    if (isArraysEqual(pressedKeys, normalizedSequence)) {
+    if (isArraysEqual(pressedKeys, sequence)) {
       setTimeout(() => {
         display.value = "Correct!";
       }, 300);
@@ -237,16 +223,18 @@ function compareSymbols() {
       nextButton.disabled = true;
       repeatButton.disabled = true;
       inputBlocked = true;
+      // inputBlocked = true;
     } else {
       setTimeout(() => {
         display.value = "Wrong sequence!";
       }, 300);
-      tryCount++;
+      tryCount++
       pressedKeys = [];
       nextButton.disabled = true;
     }
   }
 }
+
 
 function isArraysEqual(arr1, arr2) {
   return arr1.toString() === arr2.toString();
