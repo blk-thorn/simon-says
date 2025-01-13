@@ -24,52 +24,54 @@ h1 {
 }
 
 
-.control__list {
-  display: flex;
-  list-style: none;
-  margin: 20px 0;
-}
-
+.control__list,
 .level__list {
+  width: 30%;
+  /*min-width: 10rem;*/
   display: flex;
+  flex-direction: column;
+  row-gap: 5px;
   list-style: none;
   margin: 20px 0;
 }
 
-.control__item {
 
-}
-
-.control__button {
-  margin-right: 10px;
-  padding: 10px 15px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
+.control__button,
 .level__button {
-  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
   padding: 10px 15px;
   font-size: 16px;
   cursor: pointer;
+  border: 1px solid dimgray;
+  border-radius: 10px;
 }
 
 
-.control__button:hover {
+.control__button:not([disabled]):hover:not(.key--active),
+.level__button:not([disabled]):hover:not(.key--active) {
+  background-color: #bbb;
   cursor: pointer;
 }
 
 .virtual-keyboard {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  width: 82%;
+  max-width: 650px;
+  height: 200px;
   justify-content: center;
-  grid-template-columns: repeat(10, 1fr);
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .key {
-  display: grid;
-  justify-self: center;
+  display: flex;
+  width: 3.3rem;
+  height: 3.3rem;
+  justify-content: center;
+  align-content: center;
   padding: 20px;
   background-color: #ddd;
   border: 1px solid #ccc;
@@ -79,18 +81,21 @@ h1 {
   user-select: none;
 }
 
-.key:hover {
+.key--active:hover {
+  background-color: rgba(225, 0, 0, 0.5);
+  cursor: not-allowed;
+}
+
+.key:not(.key--active):hover {
   background-color: #bbb;
 }
 
+
+
 .key--active {
-  background-color: red;
+  background-color: rgba(225, 0, 0, 0.5);
 }
 
-.disabled {
-  background-color: #e0e0e0;
-  cursor: not-allowed;
-}
 
 .display-none {
   display: none;
@@ -99,12 +104,77 @@ h1 {
 .display {
   display: flex;
   text-align: center;
-  width: 600px;
-  height: 200px;
+  width: 100%;
+  height: 250px;
   font-size: 32px;
   border-radius: 15px;
+  margin: 0 1rem;
+  background-color: rgba(50, 180, 225, 0.2);
 }
 
 :disabled {
-  cursor: not-allowed;
+  cursor: not-allowed !important;
+}
+
+
+.main {
+  width: 80vw;
+  max-width: 1000px;
+  display: flex;
+  margin: 2rem 0 0 0;
+}
+
+
+.start-button {
+  display: flex;
+  justify-content: center;
+  width: 30%;
+  margin: 1rem 0;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border: 1px solid #696969;
+  border-radius: 10px;
+}
+
+.start-button:not(.hidden):hover{
+  background-color: #bbb;
+  cursor: pointer;
+}
+
+.hidden {
+  color: rgba(0, 0, 0, 0.0);
+  background-color: rgba(0, 0, 0, 0.0);
+  border: rgba(0, 0, 0, 0.0);
+  cursor: default;
+}
+
+
+@media (min-width: 360px) and (max-width: 767px) {
+
+  .main {
+    width: 80vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem 0 0 0;
+  }
+
+  .control__list,
+  .level__list {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    column-gap: 5px;
+  }
+  .control__button,
+  .level__button {
+    width: 100%;
+  }
+
+}
+
+@media (min-width: 360px) and (max-width: 1090px) {
+
 }

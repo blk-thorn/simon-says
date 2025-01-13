@@ -1,6 +1,8 @@
 const body = document.querySelector("body");
 let display;
 
+const activeColor = 'rgba(225, 0, 0, 0.5)'
+
 
 const difficulty = {
   easy: '0123456789',
@@ -66,9 +68,11 @@ function init() {
     sequence = [];
     pressedKeys = [];
     startGame();
-    startButton.style.display = 'none';
+    // startButton.style.display = 'none';
+    startButton.classList.add('hidden');
     repeatButton.style.display = 'flex';
     newGame.style.display = 'flex';
+    startButton.disabled = true;
   });
 
   repeatButton.addEventListener('click', () => {
@@ -81,20 +85,21 @@ function init() {
   nextButton.addEventListener('click', () => {
     nextRound();
     repeatButton.disabled = false;
+    inputBlocked = false;
   });
 
   newGame.addEventListener('click', () => {
     display.value = "";
     sequence = [];
     pressedKeys = [];
-
+    startButton.disabled = false;
     repeatButton.disabled = false;
     easyButton.disabled = false;
     mediumButton.disabled = false;
     hardButton.disabled = false;
     inputBlocked = false;
 
-    startButton.style.display = 'flex';
+    startButton.classList.remove('hidden');
     repeatButton.style.display = 'none';
     newGame.style.display = 'none';
     nextButton.style.display = 'none';
@@ -126,11 +131,11 @@ function generateVirtualKeyboard() {
 
     keyElement.addEventListener('click', () => {
       handleKeyPress(symbol);
-      changeButtonColor(symbol, 'red');
+      changeButtonColor(symbol, activeColor);
     });
 
     keyElement.addEventListener('mousedown', () => {
-      changeButtonColor(symbol, 'red');
+      changeButtonColor(symbol, activeColor);
     });
 
     keyElement.addEventListener('mouseup', () => {
@@ -147,7 +152,7 @@ function generateVirtualKeyboard() {
 
   document.addEventListener('keydown', (event) => {
     const keySymbol = event.key.toUpperCase();
-    changeButtonColor(keySymbol, 'red');
+    changeButtonColor(keySymbol, activeColor);
   });
 
   document.addEventListener('keyup', (event) => {
@@ -158,7 +163,9 @@ function generateVirtualKeyboard() {
 
 function changeButtonColor(key, color) {
   const button = document.querySelector(`.key[data-key="${key}"]`);
-  button.style.backgroundColor = color;
+  if (button) {
+    button.style.backgroundColor = color;
+  }
 }
 
 function handleKeyPress(symbol) {
@@ -174,6 +181,8 @@ function handleKeyPress(symbol) {
   if (!keyPressedOnce && validKeys.includes(keySymbol)) {
     console.log(`Key accepted: ${keySymbol}`);
     pressedKeys.push(keySymbol);
+    display.value = pressedKeys.join(' ');
+
     compareSymbols();
     keyPressedOnce = true;
   } else {
@@ -193,7 +202,9 @@ function compareSymbols() {
   if (pressedKeys.length === sequence.length) {
     inputBlocked = true;
     if (isArraysEqual(pressedKeys, sequence)) {
-      display.value = "Correct!";
+      setTimeout(() => {
+        display.value = "Correct!";
+      }, 300);
       currentRound++;
       nextButton.style.display = 'flex';
       nextButton.disabled = false;
@@ -203,13 +214,17 @@ function compareSymbols() {
         document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
       }, 1000);
     } else if (tryCount === 2) {
-      display.value = "You loose!";
+      setTimeout(() => {
+        display.value = "You loose!";
+      }, 300);
       pressedKeys = [];
       nextButton.disabled = true;
       repeatButton.disabled = true;
       // inputBlocked = true;
     } else {
-      display.value = "Wrong sequence!";
+      setTimeout(() => {
+        display.value = "Wrong sequence!";
+      }, 300);
       tryCount++
       pressedKeys = [];
       nextButton.disabled = true;
@@ -288,6 +303,13 @@ function createElements() {
   const h2 = document.createElement('h2');
   h2.textContent = `Round: ${currentRound} / 5`;
 
+  const main = document.createElement('main');
+  main.className = 'main';
+
+  display = document.createElement('input');
+  display.className = 'display';
+  display.setAttribute('readonly', true);
+
   const ul = document.createElement('ul');
   ul.className = 'level__list';
   ul.id = 'levels';
@@ -296,7 +318,7 @@ function createElements() {
   ul2.className = 'control__list';
   ul2.id = 'controls';
 
-  const levelButtons = ['Easy', 'Medium', 'Hard', 'Start'];
+  const levelButtons = ['Easy', 'Medium', 'Hard'];
 
   levelButtons.forEach(name => {
     const li = document.createElement('li');
@@ -307,8 +329,9 @@ function createElements() {
     button.id = name.toLowerCase();
     button.textContent = name;
 
-    li.appendChild(button);
-    ul.appendChild(li);
+    li.append(button);
+    ul.append(li);
+
   });
 
   const controlButtons = ['Repeat sequence', 'New game', "Next"];
@@ -324,23 +347,27 @@ function createElements() {
 
     button.style.display = 'none';
 
-    li.appendChild(button);
-    ul2.appendChild(li);
+    li.append(button);
+    ul2.append(li);
   });
+
+  const startButton = document.createElement('button');
+  startButton.id = 'start';
+  startButton.className = 'start-button';
+  startButton.textContent = 'Start';
 
   const virtualKeyboard = document.createElement('div');
   virtualKeyboard.id = 'virtual-keyboard';
   virtualKeyboard.className = 'virtual-keyboard';
 
-  display = document.createElement('input');
-  display.className = 'display';
-  display.setAttribute('readonly', true);
 
   body.append(h1);
   body.append(h2)
-  body.append(display);
-  body.append(ul);
-  body.append(ul2);
+  main.append(ul);
+  main.append(display);
+  main.append(ul2);
+  body.append(main);
+  body.append(startButton);
   body.append(virtualKeyboard);
 }
 
