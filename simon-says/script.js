@@ -76,19 +76,20 @@ function init() {
   });
 
   repeatButton.addEventListener('click', () => {
-    repeatButton.disabled = true;
-    inputBlocked = false;
-    repeat();
     display.value = '';
+    repeatButton.disabled = true;
+    repeat();
   });
 
   nextButton.addEventListener('click', () => {
+    display.value = '';
     nextRound();
+
     repeatButton.disabled = false;
     inputBlocked = false;
     nextButton.style.display = 'none';
-  });
-
+    document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
+  })
   newGame.addEventListener('click', () => {
     display.value = "";
     sequence = [];
@@ -166,6 +167,9 @@ function changeButtonColor(key, color) {
   const button = document.querySelector(`.key[data-key="${key}"]`);
   if (button) {
     button.style.backgroundColor = color;
+    if(inputBlocked) {
+      button.style.backgroundColor = '#ddd';
+    }
   }
 }
 
@@ -173,28 +177,23 @@ function handleKeyPress(symbol) {
   const keySymbol = symbol.toUpperCase();
 
   if (inputBlocked) return;
-
-  console.log('Current Difficulty:', currentDifficulty);
-
+  // console.log('Current Difficulty:', currentDifficulty);
   const validKeys = difficulty[currentDifficulty];
-  console.log('Valid keys:', validKeys);
-
+  // console.log('Valid keys:', validKeys);
   if (!keyPressedOnce && validKeys.includes(keySymbol)) {
-    console.log(`Key accepted: ${keySymbol}`);
+    // console.log(`Key accepted: ${keySymbol}`);
     pressedKeys.push(keySymbol);
     display.value = pressedKeys.join(' ');
 
     compareSymbols();
     keyPressedOnce = true;
   } else {
-    console.log(`Key rejected: ${keySymbol}`);
+    // console.log(`Key rejected: ${keySymbol}`);
   }
-
   setTimeout(() => {
     keyPressedOnce = false;
   }, 50);
 }
-
 
 
 function compareSymbols() {
@@ -206,10 +205,11 @@ function compareSymbols() {
       setTimeout(() => {
         display.value = "Correct!";
       }, 300);
-      // currentRound++;
+      currentRound++;
       nextButton.style.display = 'flex';
       nextButton.disabled = false;
       repeatButton.disabled = true;
+      // inputBlocked = true;
       // setTimeout(() => {
       //   // nextRound();
       //   document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
@@ -221,6 +221,7 @@ function compareSymbols() {
       pressedKeys = [];
       nextButton.disabled = true;
       repeatButton.disabled = true;
+      inputBlocked = true;
       // inputBlocked = true;
     } else {
       setTimeout(() => {
@@ -229,6 +230,7 @@ function compareSymbols() {
       tryCount++
       pressedKeys = [];
       nextButton.disabled = true;
+      // inputBlocked = true;
     }
   }
 }
@@ -236,6 +238,10 @@ function compareSymbols() {
 function isArraysEqual(arr1, arr2) {
   return arr1.toString() === arr2.toString();
 }
+
+
+
+
 
 function startGame() {
   const length = currentRound * 2;
@@ -245,6 +251,7 @@ function startGame() {
   document.getElementById('medium').disabled = true;
   document.getElementById('hard').disabled = true;
 
+  inputBlocked = true;
 
   sequence = [];
   tryCount = 1;
@@ -264,6 +271,9 @@ function startGame() {
 
     setTimeout(() => {
       keyToActivate.classList.remove('key--active');
+      if (index === length - 1) {
+        inputBlocked = false; // Разблокировка ввода
+      }
     }, index * 1000 + 800);
 })
 
@@ -272,22 +282,20 @@ function startGame() {
   recentSequence = sequence;
 }
 
+
 function nextRound() {
   pressedKeys = [];
   tryCount = 1;
-  currentRound++;
-
-  setTimeout(() => {
-    // nextRound();
-    document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
-  }, 1000);
   if(currentRound < 5) {
     startGame();
   }
 }
 
+
+
 function repeat() {
   const activeKeys = document.querySelectorAll('.key');
+  inputBlocked = true;
 
   recentSequence.forEach((item, index) => {
     const keyToActivate = Array.from(activeKeys).find(key => key.textContent === item);
@@ -298,6 +306,9 @@ function repeat() {
 
     setTimeout(() => {
       keyToActivate.classList.remove('key--active');
+      if (index === recentSequence.length - 1) {
+        inputBlocked = false; // Разблокировка ввода
+      }
     }, index * 1000 + 800);
   })
 }

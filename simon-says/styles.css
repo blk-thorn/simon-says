@@ -94,6 +94,7 @@ h1 {
 
 .key--active {
   background-color: rgba(225, 0, 0, 0.5);
+  color: #494949;
 }
 
 
@@ -146,7 +147,7 @@ h1 {
   color: rgba(0, 0, 0, 0.0);
   background-color: rgba(0, 0, 0, 0.0);
   border: rgba(0, 0, 0, 0.0);
-  cursor: default;
+  cursor: default !important;
 }
 
 
