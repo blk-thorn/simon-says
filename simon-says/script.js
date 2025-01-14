@@ -67,6 +67,7 @@ function init() {
   });
 
   startButton.addEventListener('click', () => {
+    document.querySelector('.subtitle').textContent = `Round: ${currentRound} / 5`;
     sequence = [];
     pressedKeys = [];
     tryCount = 1;
@@ -91,7 +92,7 @@ function init() {
     repeatButton.disabled = false;
     inputBlocked = true;
     nextButton.style.display = 'none';
-    document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
+    document.querySelector('.subtitle').textContent = `Round: ${currentRound} / 5`;
   })
   newGame.addEventListener('click', () => {
     display.value = "";
@@ -99,7 +100,7 @@ function init() {
     pressedKeys = [];
     currentRound = 1;
     tryCount = 1;
-    document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
+    document.querySelector('.subtitle').textContent = 'Repeat after me';
 
     startButton.disabled = false;
     repeatButton.disabled = false;
@@ -274,10 +275,10 @@ function startGame() {
   const length = currentRound * 2;
   const symbols = difficulty[currentDifficulty];
 
+
   document.getElementById('easy').disabled = true;
   document.getElementById('medium').disabled = true;
   document.getElementById('hard').disabled = true;
-
   inputBlocked = true;
 
   sequence = [];
@@ -360,7 +361,7 @@ function createElements() {
   h1.className = 'title';
 
   const h2 = document.createElement('h2');
-  h2.textContent = `Round: ${currentRound} / 5`;
+  h2.textContent = 'Repeat after me';
   h2.className = 'subtitle';
 
   const main = document.createElement('main');
