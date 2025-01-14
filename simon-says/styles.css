@@ -37,7 +37,7 @@
   /*min-width: 10rem;*/
   display: flex;
   flex-direction: column;
-  row-gap: 5px;
+  /*row-gap: 5px;*/
   list-style: none;
   margin: 20px 0;
 }
@@ -53,6 +53,7 @@
   cursor: pointer;
   border: 1px solid dimgray;
   border-radius: 10px;
+  margin: 5px 0;
 }
 
 
@@ -192,6 +193,7 @@
     flex-direction: row;
     column-gap: 5px;
   }
+
   .control__button,
   .level__button {
     width: 100%;
@@ -219,6 +221,7 @@
     align-items: center;
     width: 85%;
 
+  }
 }
 
 @media (min-width: 360px) and (max-width: 860px) {
