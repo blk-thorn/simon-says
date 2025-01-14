@@ -137,11 +137,21 @@
   margin: 2rem 0 0 0;
 }
 
+.button-container {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  width: 80vw;
+  height: 100px;
+}
 
 .start-button {
   display: flex;
   justify-content: center;
-  width: 30%;
+  align-items: center;
+  width: 50%;
+  max-width: 600px;
+  height: 3rem;
   margin: 1rem 0;
   padding: 10px 15px;
   font-size: 16px;
@@ -197,6 +207,17 @@
     width: 20px;
     height: 20px;
   }
+
+  .button-container {
+    width: 80vw;
+    height: 100px;
+  }
+
+  .start-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 85%;
 
 }
 

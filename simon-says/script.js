@@ -228,6 +228,10 @@ function compareSymbols() {
       }, 200);
 
       if (currentRound === 5) {
+        nextButton.disabled = true;
+        nextButton.style.display = 'none';
+        repeatButton.style.display = 'flex';
+        repeatButton.disabled = true;
         setTimeout(() => {
           display.value = "You won!";
         }, 200);
@@ -289,6 +293,8 @@ function startGame() {
     const keyToActivate = Array.from(activeKeys).find(key => key.textContent === item);
 
     setTimeout(() => {
+      document.getElementById('repeat sequence').disabled = true;
+      document.getElementById('new game').disabled = true;
       // keyToActivate.classList.add('key--active');
       keyToActivate.style.backgroundColor = activeColor;
     }, index * 1000);
@@ -297,7 +303,9 @@ function startGame() {
       // keyToActivate.classList.remove('key--active');
       keyToActivate.style.backgroundColor = 'rgba(47, 79, 79, 0.1)';
       if (index === length - 1) {
-          inputBlocked = false; // Разблокировка ввода здесь!!!
+        inputBlocked = false; // Разблокировка ввода здесь!!!
+        document.getElementById('repeat sequence').disabled = false;
+        document.getElementById('new game').disabled = false;
       }
     }, index * 1000 + 800);
 })
@@ -327,7 +335,9 @@ function repeat() {
     const keyToActivate = Array.from(activeKeys).find(key => key.textContent === item);
 
     setTimeout(() => {
-      keyToActivate.style.backgroundColor = activeColor;
+      document.getElementById('repeat sequence').disabled = true;
+      document.getElementById('new game').disabled = true;
+        keyToActivate.style.backgroundColor = activeColor;
       // keyToActivate.classList.add('key--active');
     }, index * 1000);
 
@@ -336,7 +346,8 @@ function repeat() {
       // keyToActivate.style.backgroundColor = '#ddd';
       keyToActivate.style.backgroundColor = 'rgba(47, 79, 79, 0.1)';
       if (index === recentSequence.length - 1) {
-          inputBlocked = false; // Разблокировка ввода здесь!!!
+        inputBlocked = false; // Разблокировка ввода здесь!!!
+        document.getElementById('new game').disabled = false;
       }
     }, index * 1000 + 800);
   })
@@ -399,6 +410,9 @@ function createElements() {
     ul2.append(li);
   });
 
+  const buttonContainer = document.createElement('div');
+  buttonContainer.className = 'button-container';
+
   const startButton = document.createElement('button');
   startButton.id = 'start';
   startButton.className = 'start-button';
@@ -415,7 +429,8 @@ function createElements() {
   main.append(display);
   main.append(ul2);
   body.append(main);
-  body.append(startButton);
+  buttonContainer.append(startButton);
+  body.append(buttonContainer);
   body.append(virtualKeyboard);
 }
 
