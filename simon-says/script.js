@@ -69,6 +69,7 @@ function init() {
   startButton.addEventListener('click', () => {
     sequence = [];
     pressedKeys = [];
+    tryCount = 1;
     startGame();
     // startButton.style.display = 'none';
     startButton.classList.add('hidden');
@@ -97,6 +98,7 @@ function init() {
     sequence = [];
     pressedKeys = [];
     currentRound = 1;
+    tryCount = 1;
     document.querySelector('h2').textContent = `Round: ${currentRound} / 5`;
 
     startButton.disabled = false;
@@ -104,7 +106,6 @@ function init() {
     easyButton.disabled = false;
     mediumButton.disabled = false;
     hardButton.disabled = false;
-    inputBlocked = false;
 
     startButton.classList.remove('hidden');
     repeatButton.style.display = 'none';
@@ -113,10 +114,22 @@ function init() {
   });
 
   document.addEventListener('keydown', (event) => {
-    if(inputBlocked) return;
     const keySymbol = event.code.replace('Key', '').replace('Digit', '').toUpperCase();
+    if(inputBlocked) {
+      changeButtonColor(keySymbol, '');
+      return;
+    }
     handleKeyPress(keySymbol);
     changeButtonColor(keySymbol, activeColor);
+  });
+
+  document.addEventListener('keyup', (event) => {
+    const keySymbol = event.key.toUpperCase();
+    if(inputBlocked) {
+      changeButtonColor(keySymbol, '');
+      return;
+    }
+    changeButtonColor(keySymbol, '');
   });
 }
 
@@ -153,34 +166,16 @@ function generateVirtualKeyboard() {
 
       virtualKeyboard.appendChild(keyElement);
   });
-
-  document.addEventListener('keydown', (event) => {
-    if(inputBlocked) return;
-    const keySymbol = event.key.toUpperCase();
-    changeButtonColor(keySymbol, activeColor);
-  });
-
-  document.addEventListener('keydown', (event) => {
-    if(inputBlocked) return;
-    const keySymbol = event.code.replace('Key', '').replace('Digit', '').toUpperCase();
-    handleKeyPress(keySymbol);
-    changeButtonColor(keySymbol, activeColor);
-  });
 }
-  }
+}
 
 function changeButtonColor(key, color) {
   const button = document.querySelector(`.key[data-key="${key}"]`);
   if (button) {
     button.style.backgroundColor = color;
-    if(inputBlocked) {
-      color = ''
-      button.style.backgroundColor = color;
-    }
   }
+
 }
-
-
 
 
 function handleKeyPress(keySymbol) {
@@ -209,32 +204,18 @@ function handleKeyPress(keySymbol) {
 function compareSymbols() {
   const nextButton = document.getElementById('next');
   const repeatButton = document.getElementById('repeat sequence');
-  tryCount = 1;
-  let isWrong = false;
 
-  for (let i = 0; i < pressedKeys.length; i++) {
+  let hasErrors = false;
+
+  const minLength = Math.min(pressedKeys.length, sequence.length);
+  for (let i = 0; i < minLength; i++) {
     if (pressedKeys[i] !== sequence[i]) {
-      setTimeout(() => {
-        display.value = "Wrong sequence!";
-      }, 100);
-      tryCount++;
-      isWrong = true;
-      pressedKeys = [];
-      nextButton.disabled = true;
-      inputBlocked = true;
-      return;
-    }
-  }
-  if(isWrong) {
-    console.log(tryCount)
-    if(tryCount === 2) {
-    setTimeout(() => {
-      display.value = "You lose!";
-    }, 200);
+      hasErrors = true;
+      break;
     }
   }
 
-  if (pressedKeys.length === sequence.length) {
+  if (!hasErrors && pressedKeys.length === sequence.length) {
     inputBlocked = true;
     if (isArraysEqual(pressedKeys, sequence)) {
       nextButton.style.display = 'flex';
@@ -245,38 +226,41 @@ function compareSymbols() {
       setTimeout(() => {
         display.value = "Correct!";
       }, 200);
-      if(currentRound === 5) {
+
+      if (currentRound === 5) {
         setTimeout(() => {
           display.value = "You won!";
         }, 200);
-
       }
       currentRound++;
-      if(currentRound > 5) {
+      if (currentRound > 5) {
         nextButton.disabled = true;
         nextButton.style.display = 'none';
       }
-    } else {
-      if (tryCount === 2) {
-        setTimeout(() => {
-          display.value = "You lose!";
-        }, 200);
-        pressedKeys = [];
-        nextButton.disabled = true;
-        repeatButton.disabled = true;
-        inputBlocked = true;
-      } else {
-        setTimeout(() => {
-          display.value = "Wrong sequence!";
-        }, 200);
-        pressedKeys = [];
-        nextButton.disabled = true;
-        inputBlocked = true;
-      }
+    }
+  }
+
+  if(hasErrors) {
+    if (tryCount < 2) {
+      setTimeout(() => {
+        display.value = "Wrong sequence!";
+      }, 200);
+      pressedKeys = [];
+      nextButton.disabled = true;
+      inputBlocked = true;
+    }
+
+    if (tryCount === 2) {
+      setTimeout(() => {
+        display.value = "You lose!";
+      }, 200);
+      pressedKeys = [];
+      nextButton.disabled = true;
+      repeatButton.disabled = true;
+      inputBlocked = true;
     }
   }
 }
-
 
 function isArraysEqual(arr1, arr2) {
   return arr1.toString() === arr2.toString();
@@ -293,7 +277,7 @@ function startGame() {
   inputBlocked = true;
 
   sequence = [];
-  tryCount = 1;
+
 
   for(let i =  0; i < length; i++) {
     sequence.push(symbols.charAt(Math.floor(Math.random() * symbols.length)));
@@ -337,6 +321,7 @@ function nextRound() {
 function repeat() {
   const activeKeys = document.querySelectorAll('.key');
   inputBlocked = true;
+ tryCount++;
 
   recentSequence.forEach((item, index) => {
     const keyToActivate = Array.from(activeKeys).find(key => key.textContent === item);
