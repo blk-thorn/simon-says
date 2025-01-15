@@ -132,7 +132,12 @@ function init() {
     }
     changeButtonColor(keySymbol, '');
   });
+
+
+
+
 }
+
 
 function generateVirtualKeyboard() {
   const virtualKeyboard = document.getElementById('virtual-keyboard');

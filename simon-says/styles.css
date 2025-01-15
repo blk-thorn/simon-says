@@ -5,7 +5,7 @@
   border: none;
   margin: 0;
   box-sizing: border-box;
-  font-family: 'Sonic Logo', serif;
+  font-family:  serif;
   font-weight: bold;
   font-style: normal;
 }
@@ -16,7 +16,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  /*height: 100vh;*/
+  width: 100vw;
   margin: 0;
   background-color: #f0f0f0;
 }
@@ -63,6 +64,8 @@
   background-color: rgba(47, 79, 79, 0.2);
   cursor: pointer;
 }
+
+
 
 .virtual-keyboard {
   display: flex;
@@ -172,6 +175,7 @@
   background-color: rgba(0, 0, 0, 0.0);
   border: rgba(0, 0, 0, 0.0);
   cursor: default !important;
+  pointer-events: none;
 }
 
 
@@ -179,19 +183,31 @@
 
   .main {
     width: 80vw;
+    height: 40%;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 2rem 0 0 0;
   }
 
-  .control__list,
+
   .level__list {
     width: 100%;
     display: flex;
     justify-content: center;
     flex-direction: row;
     column-gap: 5px;
+    margin: 10px 0;
+  }
+
+  .control__list {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    height: 50px;
+    column-gap: 5px;
+    margin: 10px 0;
   }
 
   .control__button,
@@ -212,15 +228,14 @@
 
   .button-container {
     width: 80vw;
-    height: 100px;
+    height: 50px;
   }
-
   .start-button {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 85%;
-
+    margin: 0;
   }
 }
 
