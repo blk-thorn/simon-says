@@ -100,6 +100,7 @@ function init() {
     pressedKeys = [];
     currentRound = 1;
     tryCount = 1;
+    inputBlocked = true;
     document.querySelector('.subtitle').textContent = 'Repeat after me';
 
     startButton.disabled = false;
