@@ -20,6 +20,7 @@ let currentDifficulty = 'easy';
 
 let tryCount = 1;
 let keyPressedOnce = false;
+let activeKey = null;
 let inputBlocked = true;
 
 
@@ -121,8 +122,15 @@ function init() {
       changeButtonColor(keySymbol, '');
       return;
     }
+    if (keyPressedOnce || activeKey === keySymbol) {
+      return;
+    }
+    resetButtonColors();
     handleKeyPress(keySymbol);
     changeButtonColor(keySymbol, activeColor);
+
+    keyPressedOnce = true;
+    activeKey = keySymbol;
   });
 
   document.addEventListener('keyup', (event) => {
@@ -132,11 +140,19 @@ function init() {
       return;
     }
     changeButtonColor(keySymbol, '');
+    if (activeKey === keySymbol) {
+      keyPressedOnce = false;
+      activeKey = null;
+    }
   });
 
+  function resetButtonColors() {
+    const keys = document.querySelectorAll('.key');
+    keys.forEach(key => {
+      key.style.backgroundColor = '';
+    });
 
-
-
+  }
 }
 
 
