@@ -176,6 +176,7 @@
   border: rgba(0, 0, 0, 0.0);
   cursor: default !important;
   pointer-events: none;
+  user-select: none;
 }
 
 
@@ -236,6 +237,16 @@
     align-items: center;
     width: 85%;
     margin: 0;
+  }
+
+  .display {
+font-size: 32px;
+  }
+
+  .virtual-keyboard {
+    width: 82%;
+    max-width: 650px;
+    height: 0;
   }
 }
 
