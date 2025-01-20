@@ -10,13 +10,11 @@
   font-style: normal;
 }
 
-
 .body {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /*height: 100vh;*/
   width: 100vw;
   margin: 0;
   background-color: #f0f0f0;
@@ -35,14 +33,11 @@
 .control__list,
 .level__list {
   width: 30%;
-  /*min-width: 10rem;*/
   display: flex;
   flex-direction: column;
-  /*row-gap: 5px;*/
   list-style: none;
   margin: 20px 0;
 }
-
 
 .control__button,
 .level__button {
@@ -57,17 +52,13 @@
   margin: 5px 0;
 }
 
-
 .control__button:not([disabled]):hover:not(.key--active),
 .level__button:not([disabled]):hover:not(.key--active) {
-  /*background-color: #bbb;*/
   background-color: rgba(47, 79, 79, 0.2);
   cursor: pointer;
 }
 
-
-
-.virtual-keyboard {
+.keyboard {
   display: flex;
   flex-wrap: wrap;
   width: 82%;
@@ -85,7 +76,6 @@
   justify-content: center;
   align-items: center;
   padding: 20px;
-  /*background-color: rgba(221, 221, 221, 0.5);*/
   background-color: rgba(47, 79, 79, 0.1);
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -100,17 +90,13 @@
 }
 
 .key:not(.key--active):hover {
-  /*background-color: #bbb;*/
   background-color: rgba(47, 79, 79, 0.2);
 }
-
-
 
 .key--active {
   background-color: rgba(225, 0, 0, 0.5);
   color: #494949;
 }
-
 
 .display-none {
   display: none;
@@ -132,7 +118,6 @@
   cursor: not-allowed;
   border: 1px solid #bebebe;
 }
-
 
 .main {
   width: 80vw;
@@ -165,7 +150,6 @@
 }
 
 .start-button:not(.hidden):hover{
-  /*background-color: #bbb;*/
   background-color: rgba(47, 79, 79, 0.1);
   cursor: pointer;
 }
@@ -181,7 +165,6 @@
 
 
 @media (min-width: 360px) and (max-width: 767px) {
-
   .main {
     width: 80vw;
     height: 40%;
@@ -217,7 +200,7 @@
     padding: 10px 15px;
   }
 
-  .virtual-keyboard {
+  .keyboard {
     width: 85%;
     max-width: 600px;
   }
@@ -243,7 +226,7 @@
 font-size: 32px;
   }
 
-  .virtual-keyboard {
+  .keyboard {
     width: 82%;
     max-width: 650px;
     height: 0;
